@@ -23,11 +23,28 @@ Go to **SerpDino Dashboard → Settings → API Keys** and create a new key.
 
 Just paste the URL into your MCP client. Nothing to install or build.
 
-**Claude Desktop / ChatGPT:**
-1. Add a custom connector
-2. Name: `SerpDino`
-3. URL: `https://serpdino.com/api/mcp`
-4. Set your API key as the Bearer token
+**ChatGPT:**
+1. In ChatGPT web, open **Settings → Apps → Advanced settings**
+2. Enable **Developer mode**
+3. Go back to **Settings → Apps**
+4. Click **Create app**
+5. Name: `SerpDino`
+6. URL: `https://serpdino.com/api/mcp`
+7. Click **Create**
+8. You will be redirected to the authorization page
+9. Enter your API key to finish connecting the app
+
+Developer mode availability depends on your ChatGPT plan and role.
+
+**Claude:**
+1. In the Claude web app, open **Customize** in the left sidebar
+2. Go to **Connectors**
+3. Click **+** and choose **Add custom connector**
+4. In the popup, set **Name** to `SerpDino`
+5. Set **Remote MCP** to `https://serpdino.com/api/mcp`
+6. Open **Advanced settings**
+7. In **OAuth Client ID**, paste your API key
+8. After saving, click the three dots in the top-right and choose **Refresh tools list**
 
 **Any MCP client** — point it to:
 ```
