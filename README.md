@@ -2,9 +2,14 @@
 
 Connect AI agents and your own code to [SerpDino](https://serpdino.com) SEO tools.
 
-Your SerpDino API key works in two ways:
-1. **MCP Server** — plug into Claude Desktop, Cursor, or any MCP client
-2. **REST API** — call endpoints directly from any language/script
+Your SerpDino API key works in three ways:
+
+| | Remote MCP | Local MCP | REST API |
+|---|---|---|---|
+| **Setup** | Paste a URL | Clone & build | `curl` / any language |
+| **Install required** | No | Yes | No |
+| **Works offline** | No | No (calls SerpDino API) | No |
+| **Best for** | Claude, ChatGPT, quick start | Cursor, CI, custom agents | Scripts, integrations |
 
 ---
 
@@ -14,9 +19,30 @@ Your SerpDino API key works in two ways:
 
 Go to **SerpDino Dashboard → Settings → API Keys** and create a new key.
 
-### 2a. Use as MCP Server
+### 2a. Remote MCP (easiest — no install)
+
+Just paste the URL into your MCP client. Nothing to install or build.
+
+**Claude Desktop / ChatGPT:**
+1. Add a custom connector
+2. Name: `SerpDino`
+3. URL: `https://serpdino.com/api/mcp`
+4. Set your API key as the Bearer token
+
+**Any MCP client** — point it to:
+```
+https://serpdino.com/api/mcp
+```
+with header `Authorization: Bearer sd_your_key_here`.
+
+That's it. All 28 tools are available immediately.
+
+### 2b. Local MCP (self-hosted)
+
+Run the MCP server as a local process. Better for dev tools like Cursor that launch MCP servers as subprocesses.
 
 ```bash
+git clone https://github.com/Serpdino/serpdino-mcp.git
 cd serpdino-mcp
 npm install
 npm run build
@@ -38,7 +64,7 @@ Add to your MCP client config (Claude Desktop, Cursor, etc.):
 }
 ```
 
-### 2b. Use as REST API
+### 2c. REST API (direct calls)
 
 All SerpDino API endpoints accept `Authorization: Bearer sd_your_key_here` header.
 
@@ -66,7 +92,7 @@ curl -X POST -H "Authorization: Bearer sd_your_key_here" \
   https://serpdino.com/api/tools/traffic-check
 ```
 
-## Environment Variables
+## Environment Variables (local MCP only)
 
 | Variable | Required | Description |
 |---|---|---|
@@ -104,12 +130,13 @@ All endpoints return JSON. Authenticate with `Authorization: Bearer sd_...` head
 |---|---|---|
 | `POST` | `/api/projects/keywords` | Add keywords. Body: `{ projectId, keywords[], geoCode, langCode }` |
 | `DELETE` | `/api/projects/keywords` | Remove keywords. Body: `{ projectId, keywordIds[] }` |
+| `POST` | `/api/scrape/new-keywords` | Refresh positions. Body: `{ projectId, keywordIds[] }` |
 
 ### Ranking Data
 
 | Method | Endpoint | Description |
 |---|---|---|
-| `GET` | `/api/projects/keyword-updates?projectId=&startDate=&endDate=&aggregation=` | Keyword position history |
+| `GET` | `/api/projects/keyword-updates?projectId=&startDate=&endDate=&aggregation=&search=&sortBy=&sortOrder=` | Keyword position history |
 | `GET` | `/api/projects/position-history?keywordUpdateId=` | Full SERP snapshot for a check |
 | `GET` | `/api/projects/keyword-volumes?projectId=&keywordId=` | Search volume, CPC, competition |
 
@@ -168,7 +195,20 @@ All endpoints return JSON. Authenticate with `Authorization: Bearer sd_...` head
 
 ## MCP Tools
 
-The MCP server exposes 28 tools. See the tool list via `tools/list` or ask your agent *"What tools do you have from SerpDino?"*
+Both remote and local MCP expose the same 28 tools:
+
+| Category | Tools |
+|---|---|
+| **Projects** | `list_projects`, `get_project`, `create_project`, `update_project`, `delete_project` |
+| **Folders** | `list_folders`, `create_folder` |
+| **Keywords** | `add_keywords`, `remove_keywords`, `refresh_keywords` |
+| **Rankings** | `get_keyword_rankings`, `get_serp_results`, `get_keyword_volumes` |
+| **Research** | `keyword_research`, `get_keyword_suggestions`, `get_keyword_ideas` |
+| **Competitors** | `get_competitor_rankings`, `compare_competitors` |
+| **Performance** | `get_project_pages`, `get_pagespeed`, `get_page_pagespeed`, `get_crux_history` |
+| **Traffic** | `get_traffic_stats` |
+| **Notes** | `list_notes`, `add_note`, `delete_note` |
+| **Account** | `get_capacity`, `export_project_report` |
 
 ### Example Prompts
 
@@ -177,6 +217,7 @@ The MCP server exposes 28 tools. See the tool list via `tools/list` or ask your 
 - *"Compare my site's traffic against competitor.com"*
 - *"What are the Core Web Vitals for my domain?"*
 - *"Generate a full SEO report for my project"*
+- *"Refresh all keyword positions for my project"*
 
 ## Development
 
